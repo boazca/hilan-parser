@@ -10,10 +10,9 @@ object Processor {
 
   def downloadAndParse(folderPath: String, baseUrl: String, username: String, password: String): Unit = {
 
-    if (!Files.isDirectory(Paths.get(folderPath))) throw new IllegalArgumentException(s"$folderPath is not a folder")
+    if (!Files.isDirectory(Paths.get(folderPath))) Files.createDirectory(Paths.get(folderPath))
 
     download(folderPath, baseUrl, username, password)
-
     parse(folderPath)
   }
 
