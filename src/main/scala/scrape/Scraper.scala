@@ -2,6 +2,7 @@ package scrape
 
 import java.io.{BufferedOutputStream, FileOutputStream}
 import java.net.URL
+import java.nio.file.Paths
 import java.util.Calendar
 
 import com.gargoylesoftware.htmlunit._
@@ -34,7 +35,7 @@ class Scraper {
       val fullDate = s"${date.day}/${date.month}/${date.year}"
       val filePath = s"$baseUrl/Hilannetv2/PersonalFile/PdfPaySlip.aspx/$fileName?Date=$fullDate&userId=$orgId$username"
       val payslipFile = client.getPage[Page](filePath).getWebResponse.getContentAsStream
-      val localFileDestination = new java.io.File(folderPath + fileName)
+      val localFileDestination = new java.io.File(Paths.get(folderPath, fileName).toString)
       val out = new BufferedOutputStream(new FileOutputStream(localFileDestination))
       val byteArray = Stream.continually(payslipFile.read).takeWhile(_ != -1).map(_.toByte).toArray
       out.write(byteArray)

@@ -1,6 +1,7 @@
 package parser
 
 import java.io.File
+import java.nio.file.Paths
 
 import com.itextpdf.text.pdf.PdfReader
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
@@ -15,7 +16,7 @@ object Parser {
       HebrewUtil.fixText(payslipText)
     }
     val aggregatedData = DataExtractor.parse(payslips)
-    val destinationFilePath = folderPathName + "summary.xls"
+    val destinationFilePath = Paths.get(folderPathName, "summary.xls").toString
     ExcelExport.writeToFile(destinationFilePath, aggregatedData)
   }
 
