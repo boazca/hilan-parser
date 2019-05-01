@@ -8,33 +8,27 @@ import scrape.NoDataFoundException
 
 import scala.util.Try
 
-class Client(baseUrl: String, username: String, password: String) {
+class Client() {
 
   private val logger = LoggerFactory.getLogger(classOf[Client])
 
-  val webClient: WebClient = {
+  def login(baseUrl: String, username: String, password: String): Try[AuthenticatedClient] = {
     val webClient = new WebClient
     webClient.getOptions.setCssEnabled(false)
     webClient.getOptions.setJavaScriptEnabled(false)
-    webClient
+
+    loginAndGetOrgId(webClient, baseUrl, username, password).map(orgId =>
+      new AuthenticatedClient(webClient, username, orgId, baseUrl))
   }
 
-  val orgId: Try[String] = loginAndGetOrgId(baseUrl, username, password)
-
-  private def extractOrgIdFromPage(text: String): Option[String] = {
-    val pattern = "\\\\\"OrgId\\\\\":\\\\\"(\\d+)\\\\\"".r
-    pattern.findFirstMatchIn(text).map(_.group(1))
+  private def loginAndGetOrgId(webClient: WebClient, baseUrl: String, username: String, password: String): Try[String] = {
+    for {
+      orgId <- getLoginPageOrgId(webClient, baseUrl)
+      _ <- loginAndSetCookies(webClient, baseUrl, username, password, orgId)
+    } yield orgId
   }
 
-  private def loginAndSetCookies(baseUrl: String, username: String, password: String, orgId: String) = {
-    val loginRequest = new WebRequest(new URL(s"$baseUrl/HilanCenter/Public/api/LoginApi/LoginRequest"), HttpMethod.POST)
-    loginRequest.setRequestBody(s"orgId=$orgId&username=$username&password=$password&isEn=true")
-    val homePage = Try(webClient.getPage[Page](loginRequest).getWebResponse.getContentAsString())
-    logger.debug(s"LoginRequest: $homePage")
-    homePage
-  }
-
-  private def getLoginPageOrgId(baseUrl: String): Try[String] = {
+  private def getLoginPageOrgId(webClient: WebClient, baseUrl: String): Try[String] = {
     val loginPage = Try(webClient.getPage[Page](s"$baseUrl/login").getWebResponse.getContentAsString())
     logger.debug(s"login page: $loginPage")
     loginPage.flatMap(page =>
@@ -43,10 +37,17 @@ class Client(baseUrl: String, username: String, password: String) {
     )
   }
 
-  private def loginAndGetOrgId(baseUrl: String, username: String, password: String): Try[String] = {
-    for {
-      orgId <- getLoginPageOrgId(baseUrl)
-      _ <- loginAndSetCookies(baseUrl, username, password, orgId)
-    } yield orgId
+  def extractOrgIdFromPage(text: String): Option[String] = {
+    val pattern = "\\\\\"OrgId\\\\\":\\\\\"(\\d+)\\\\\"".r
+    pattern.findFirstMatchIn(text).map(_.group(1))
   }
+
+  private def loginAndSetCookies(webClient: WebClient, baseUrl: String, username: String, password: String, orgId: String): Try[String] = {
+    val loginRequest = new WebRequest(new URL(s"$baseUrl/HilanCenter/Public/api/LoginApi/LoginRequest"), HttpMethod.POST)
+    loginRequest.setRequestBody(s"orgId=$orgId&username=$username&password=$password&isEn=true")
+    val homePage = Try(webClient.getPage[Page](loginRequest).getWebResponse.getContentAsString())
+    logger.debug(s"LoginRequest: $homePage")
+    homePage
+  }
+
 }

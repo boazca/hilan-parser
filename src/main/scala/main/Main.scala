@@ -3,8 +3,9 @@ package main
 import java.awt.EventQueue
 import java.nio.file.Paths
 
-import scala.io.StdIn.readLine
 import ui.LoginUI
+
+import scala.io.StdIn.readLine
 
 object Main {
 
@@ -13,29 +14,6 @@ object Main {
       runUI()
     } else {
       runWithoutUI(args)
-    }
-  }
-
-  private def parseOption(options: Map[String, String], args: List[String]) : Map[String, String] = {
-    if (args.isEmpty) options else {
-      val option :: tail = args
-      option.split('=').toSeq match {
-        case Seq("--path", value) =>
-          parseOption(options ++ Map("path" -> value), tail)
-        case Seq("--company", value) =>
-          parseOption(options ++ Map("company" -> value), tail)
-        case Seq("--username", value) =>
-          parseOption(options ++ Map("username" -> value), tail)
-        case Seq("--password", value) =>
-          parseOption(options ++ Map("password" -> value), tail)
-        case Seq("-u") =>
-          val value :: rest = tail
-          parseOption(options ++ Map("username" -> value), rest)
-        case Seq("-p") =>
-          val value :: rest = tail
-          parseOption(options ++ Map("password" -> value), rest)
-        case _ => parseOption(options, tail)
-      }
     }
   }
 
@@ -67,6 +45,31 @@ object Main {
 
     val string = Paths.get(folderPath).toString
     Processor.downloadAndParse(string, baseUrl, username, password)
+  }
+
+  private def parseOption(options: Map[String, String], args: List[String]): Map[String, String] = {
+    if (args.isEmpty) {
+      options
+    } else {
+      val option :: tail = args
+      option.split('=').toSeq match {
+        case Seq("--path", value) =>
+          parseOption(options ++ Map("path" -> value), tail)
+        case Seq("--company", value) =>
+          parseOption(options ++ Map("company" -> value), tail)
+        case Seq("--username", value) =>
+          parseOption(options ++ Map("username" -> value), tail)
+        case Seq("--password", value) =>
+          parseOption(options ++ Map("password" -> value), tail)
+        case Seq("-u") =>
+          val value :: rest = tail
+          parseOption(options ++ Map("username" -> value), rest)
+        case Seq("-p") =>
+          val value :: rest = tail
+          parseOption(options ++ Map("password" -> value), rest)
+        case _ => parseOption(options, tail)
+      }
+    }
   }
 
   private def runUI(): Unit = {
