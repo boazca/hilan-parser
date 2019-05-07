@@ -30,6 +30,7 @@ object Processor {
 
   private def parse(folderPath: String): Unit = {
     Parser.parseAndWriteToXls(folderPath)
+    println("Results successfully written to " + folderPath)
   }
 
 }
