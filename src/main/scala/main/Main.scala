@@ -26,10 +26,10 @@ object Main {
   private def runCLI(args: Array[String]): Unit = {
     val options = parseArgs(args)
 
-    val folderPath = options.getOrElse(pathArg, getInputOption("Destination Path"))
-    val company = options.getOrElse(companyArg, getMultiSelectOption( "Company (Hilannet Subdomain)", companies)).toLowerCase
-    val username = options.getOrElse(usernameArg, getInputOption( "Username"))
-    val password = options.getOrElse(passwordArg, getInputOption("Password"))
+    val folderPath = options.getOrElse(pathArg, getUserInput("Destination Path"))
+    val company = options.getOrElse(companyArg, getUserSelection("Company (Hilannet Subdomain)", companies)).toLowerCase
+    val username = options.getOrElse(usernameArg, getUserInput("Username"))
+    val password = options.getOrElse(passwordArg, getUserPassword("Password"))
     val baseUrl = s"https://$company.net.hilan.co.il"
 
     val folderPathString = Paths.get(folderPath).toString
@@ -50,18 +50,23 @@ object Main {
 
   }
 
-  private def getMultiSelectOption(description: String, multiSelect: Seq[String]): String = {
+  private def getUserSelection(description: String, multiSelect: Seq[String]): String = {
     println(s"$description: ")
     multiSelect.zipWithIndex.foreach(item => println(s"${item._2}) ${item._1}"))
     println(s"${multiSelect.size}) Other")
     val selected = readLine(s"Please select one [1-${multiSelect.size}]: ").trim.toInt
     if (selected >= multiSelect.size)
-      getInputOption(description)
+      getUserInput(description)
     else
       multiSelect(selected)
   }
 
-  private def getInputOption(description: String): String = readLine(s"$description: ").trim
+  private def getUserInput(description: String): String = readLine(s"$description: ").trim
+
+  private def getUserPassword(description: String): String =
+    Option(System.console())
+      .map(_.readPassword(s"$description: ").toString.trim)
+      .getOrElse(getUserInput(description))
 
   private def runGUI(): Unit = {
     EventQueue.invokeLater(new Runnable {
