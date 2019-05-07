@@ -9,70 +9,61 @@ import scala.io.StdIn.readLine
 
 object Main {
 
+  private val companies = Seq("Wix", "Microsoft", "Fiverr", "Taboola", "Intel")
+  private val pathArg = "path"
+  private val companyArg = "company"
+  private val usernameArg = "username"
+  private val passwordArg = "password"
+
   def main(args: Array[String]): Unit = {
     if (args.length == 0) {
-      runUI()
+      runGUI()
     } else {
-      runWithoutUI(args)
+      runCLI(args)
     }
   }
 
-  private def runWithoutUI(args: Array[String]): Unit = {
-    val options = parseOption(Map(), args.toList)
+  private def runCLI(args: Array[String]): Unit = {
+    val options = parseArgs(args)
 
-    def getOption(name: String, description: String, multiSelect: String*): String = {
-      options.find(o => o._1 == name).map(o => o._2).getOrElse({
-        if (multiSelect.isEmpty)
-          readLine(s"$description: ")
-        else {
-          println(s"$description: ")
-          multiSelect.zipWithIndex.foreach[Unit](item => println(s"${item._2}) ${item._1}"))
-          println(s"${multiSelect.size}) Other")
-          val selected = readLine(s"Please select one [0-${multiSelect.size}]: ").toInt
-          if (selected == multiSelect.size)
-            getOption(name, description)
-          else
-            multiSelect(selected)
-        }
-      })
-    }
-
-    val folderPath = getOption("path", "Destination Path")
-    val company = getOption("company", "Company (Hilannet Subdomain)", "Wix", "Microsoft", "Fiverr").toLowerCase
-    val username = getOption("username", "Username")
-    val password = getOption("password", "Password")
+    val folderPath = options.getOrElse(pathArg, getInputOption("Destination Path"))
+    val company = options.getOrElse(companyArg, getMultiSelectOption( "Company (Hilannet Subdomain)", companies)).toLowerCase
+    val username = options.getOrElse(usernameArg, getInputOption( "Username"))
+    val password = options.getOrElse(passwordArg, getInputOption("Password"))
     val baseUrl = s"https://$company.net.hilan.co.il"
 
-    val string = Paths.get(folderPath).toString
-    Processor.downloadAndParse(string, baseUrl, username, password)
+    val folderPathString = Paths.get(folderPath).toString
+    Processor.downloadAndParse(folderPathString, baseUrl, username, password)
   }
 
-  private def parseOption(options: Map[String, String], args: List[String]): Map[String, String] = {
-    if (args.isEmpty) {
-      options
-    } else {
-      val option :: tail = args
-      option.split('=').toSeq match {
-        case Seq("--path", value) =>
-          parseOption(options ++ Map("path" -> value), tail)
-        case Seq("--company", value) =>
-          parseOption(options ++ Map("company" -> value), tail)
-        case Seq("--username", value) =>
-          parseOption(options ++ Map("username" -> value), tail)
-        case Seq("--password", value) =>
-          parseOption(options ++ Map("password" -> value), tail)
-        case Seq("-u") =>
-          val value :: rest = tail
-          parseOption(options ++ Map("username" -> value), rest)
-        case Seq("-p") =>
-          val value :: rest = tail
-          parseOption(options ++ Map("password" -> value), rest)
-        case _ => parseOption(options, tail)
-      }
-    }
+  private def parseArgs(args: Array[String]): Map[String, String] = {
+    val notArg = "nothing" -> "nothing"
+    args.sliding(2, 2).toList.map {
+      case Array("--path", value: String) => pathArg -> value
+      case Array("--company", value: String) => companyArg -> value
+      case Array("--username", value: String) => usernameArg -> value
+      case Array("-u", value: String) => usernameArg -> value
+      case Array("--password", value: String) => passwordArg -> value
+      case Array("-p", value: String) => passwordArg -> value
+      case _ => notArg
+    }.filterNot(arg => arg == notArg).toMap
+
   }
 
-  private def runUI(): Unit = {
+  private def getMultiSelectOption(description: String, multiSelect: Seq[String]): String = {
+    println(s"$description: ")
+    multiSelect.zipWithIndex.foreach(item => println(s"${item._2}) ${item._1}"))
+    println(s"${multiSelect.size}) Other")
+    val selected = readLine(s"Please select one [1-${multiSelect.size}]: ").trim.toInt
+    if (selected >= multiSelect.size)
+      getInputOption(description)
+    else
+      multiSelect(selected)
+  }
+
+  private def getInputOption(description: String): String = readLine(s"$description: ").trim
+
+  private def runGUI(): Unit = {
     EventQueue.invokeLater(new Runnable {
       override def run(): Unit = {
         val ex: LoginUI = new LoginUI()
