@@ -54,7 +54,7 @@ object Main {
     println(s"$description: ")
     multiSelect.zipWithIndex.foreach(item => println(s"${item._2}) ${item._1}"))
     println(s"${multiSelect.size}) Other")
-    val selected = readLine(s"Please select one [1-${multiSelect.size}]: ").trim.toInt
+    val selected = readLine(s"Please select one [0-${multiSelect.size}]: ").trim.toInt
     if (selected >= multiSelect.size)
       getUserInput(description)
     else
@@ -65,7 +65,7 @@ object Main {
 
   private def getUserPassword(description: String): String =
     Option(System.console())
-      .map(_.readPassword(s"$description: ").toString.trim)
+      .map(c => new String(c.readPassword(s"$description: ")))
       .getOrElse(getUserInput(description))
 
   private def runGUI(): Unit = {

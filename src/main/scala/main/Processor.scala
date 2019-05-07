@@ -11,7 +11,9 @@ import scala.util.Try
 object Processor {
 
   def downloadAndParse(folderPath: String, baseUrl: String, username: String, password: String): Unit = {
+    println("Downloading data...")
     download(folderPath, baseUrl, username, password).get
+    println("Processing...")
     parse(folderPath)
   }
 
