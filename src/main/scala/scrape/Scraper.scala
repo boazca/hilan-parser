@@ -36,7 +36,7 @@ class Scraper(authenticatedClient: AuthenticatedClient) {
 
   private def downloadForm106sToFolder(folderPath: String, form106Dates: Seq[HilanDate]) = {
     Try(form106Dates.foreach { date =>
-      val fileName = s"Form106-${date.year}.pdf"
+      val fileName = s"Pdf106-${date.year}.pdf"
       val stream = authenticatedClient.getForm106FileStream(fileName, date.year)
       downloadFile(folderPath, fileName, stream)
     })

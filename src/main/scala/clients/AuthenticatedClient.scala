@@ -44,7 +44,7 @@ class AuthenticatedClient(webClient: WebClient, username: String, orgId: String,
   }
 
   def getForm106FileStream(fileName: String, year: Int): InputStream = {
-    val filePath = s"$baseUrl/Hilannetv2/PersonalFile/PdfForm106.aspx/$fileName?Date=$year&userId=$orgId$username"
+    val filePath = s"$baseUrl/Hilannetv2/PersonalFile/Pdf106.aspx/$fileName?Year=$year&UserId=$orgId$username"
     webClient.getPage[Page](filePath).getWebResponse.getContentAsStream
   }
 
