@@ -28,7 +28,7 @@ object Processor {
     } yield result
   }
 
-  private def parse(folderPath: String): Unit = {
+  def parse(folderPath: String): Unit = {
     Parser.parseAndWriteToXls(folderPath)
     println("Results successfully written to " + folderPath)
   }
