@@ -26,14 +26,18 @@ object Main {
   private def runCLI(args: Array[String]): Unit = {
     val options = parseArgs(args)
 
-    val folderPath = options.getOrElse(pathArg, getUserInput("Destination Path"))
-    val company = options.getOrElse(companyArg, companies(getUserSelection("Company (Hilannet Subdomain)", companies.keys.toSeq)))
-    val username = options.getOrElse(usernameArg, getUserInput("Username"))
-    val password = options.getOrElse(passwordArg, getUserPassword("Password"))
-    val baseUrl = s"https://$company.net.hilan.co.il"
+    if (options.contains(pathArg) && options.size == 1) {
+      Processor.parse(Paths.get(options(pathArg)).toString)
+    } else {
+      val folderPath = options.getOrElse(pathArg, getUserInput("Destination Path"))
+      val company = options.getOrElse(companyArg, companies(getUserSelection("Company (Hilannet Subdomain)", companies.keys.toSeq)))
+      val username = options.getOrElse(usernameArg, getUserInput("Username"))
+      val password = options.getOrElse(passwordArg, getUserPassword("Password"))
+      val baseUrl = s"https://$company.net.hilan.co.il"
 
-    val folderPathString = Paths.get(folderPath).toString
-    Processor.downloadAndParse(folderPathString, baseUrl, username, password)
+      val folderPathString = Paths.get(folderPath).toString
+      Processor.downloadAndParse(folderPathString, baseUrl, username, password)
+    }
   }
 
   private def parseArgs(args: Array[String]): Map[String, String] = {
