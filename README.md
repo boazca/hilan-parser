@@ -1,15 +1,15 @@
 # Hilan Parser
 
-This tool creates a spreadsheet out of all your Hilan payslips
+This tool downloads all your Hilan payslips and creates a spreadsheet out of them.
 
 ## How To Run
 
-Download the project, open it in you favourite IDE and Run `Main.scala`.  
+Download the project, open it in your favorite IDE and Run `Main.scala`.  
 \* Java 8 and Scala 11 is required
 
 Or
 
-Download the fat jar and run it with `java -jar pdfparser-assembly-1.0.jar`
+Download the fat jar and run it from the shell with `java -jar pdfparser-assembly-1.0.jar`.
 
 ### GUI
 1. Run without arguments
@@ -24,3 +24,8 @@ Run with at least one argument and it will ask for the rest (you can just put -w
 - --company => Company name (Hilan sub domain)
 - --username / -u => Employee number 
 - --password / -p => Password 
+
+#### Parsing Without Downloading
+If you already have all your payslips and want to parse them to a spreadsheet, run with only the path argument:  
+`java -jar pdfparser-assembly-1.0.jar --path /Users/you/payslip/folder`.  
+\* don't put other documents in the folder
