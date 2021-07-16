@@ -9,7 +9,7 @@ import scala.io.StdIn.readLine
 
 object Main {
 
-  private val companies = Seq("Wix", "Microsoft", "Fiverr", "Taboola", "Intel")
+  private val companies = Map("Facebook" -> "nextage", "Wix" -> "wix", "Microsoft" -> "microsoft", "Fiverr" -> "fiverr", "Taboola" -> "taboola", "Intel" -> "intel")
   private val pathArg = "path"
   private val companyArg = "company"
   private val usernameArg = "username"
@@ -27,7 +27,7 @@ object Main {
     val options = parseArgs(args)
 
     val folderPath = options.getOrElse(pathArg, getUserInput("Destination Path"))
-    val company = options.getOrElse(companyArg, getUserSelection("Company (Hilannet Subdomain)", companies)).toLowerCase
+    val company = options.getOrElse(companyArg, companies(getUserSelection("Company (Hilannet Subdomain)", companies.keys.toSeq)))
     val username = options.getOrElse(usernameArg, getUserInput("Username"))
     val password = options.getOrElse(passwordArg, getUserPassword("Password"))
     val baseUrl = s"https://$company.net.hilan.co.il"

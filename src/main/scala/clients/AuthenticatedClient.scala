@@ -49,7 +49,7 @@ class AuthenticatedClient(webClient: WebClient, username: String, orgId: String,
   }
 
   def extractDatesFromPage(text: String): Seq[HilanDate] = {
-    val pattern = "(\\d{2})/(\\d{2})/(20\\d{2})".r
+    val pattern = "\"(\\d{2})/(\\d{2})/(20\\d{2})\"".r
     val dates = pattern.findAllIn(text).matchData.toSeq
     val hilanDates = dates.map(m => HilanDate(m.group(1).toInt, m.group(2).toInt, m.group(3).toInt))
     hilanDates.filter(_.year <= Calendar.getInstance().get(Calendar.YEAR)) //Don't ask...
