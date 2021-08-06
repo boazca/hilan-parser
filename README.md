@@ -4,7 +4,7 @@ This tool downloads all your Hilan payslips and creates a spreadsheet out of the
 
 ## How To Run
 
-Download the project, open it in your favorite IDE and Run `Main.scala`.  
+Download the project, open it in your favorite IDE and run `Main.scala`.  
 \* Java 8 and Scala 11 is required
 
 Or
