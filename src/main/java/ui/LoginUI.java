@@ -1,18 +1,31 @@
 package ui;
 
+import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
+
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Desktop;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import javax.swing.AbstractAction;
+import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.File;
-
-import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
-
 public class LoginUI extends JFrame {
 
-    private static Logger logger = LoggerFactory.getLogger(LoginUI.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoginUI.class);
 
     private static final String DEFAULT_COMPANY = "https://wix.net.hilan.co.il";
     private static final String FOLDER_IMG_PATH = "/open_folder.png";

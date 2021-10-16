@@ -73,11 +73,9 @@ object Main {
       .getOrElse(getUserInput(description))
 
   private def runGUI(): Unit = {
-    EventQueue.invokeLater(new Runnable {
-      override def run(): Unit = {
-        val ex: LoginUI = new LoginUI()
-        ex.setVisible(true)
-      }
+    EventQueue.invokeLater(() => {
+      val ex: LoginUI = new LoginUI()
+      ex.setVisible(true)
     })
   }
 
