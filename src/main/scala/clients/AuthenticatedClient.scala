@@ -1,11 +1,13 @@
 package clients
 
 import java.io.InputStream
-import java.util.Calendar
+import java.net.URL
 
-import com.gargoylesoftware.htmlunit.{Page, WebClient}
+import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
+import com.gargoylesoftware.htmlunit.{HttpMethod, Page, WebClient, WebRequest}
 import org.slf4j.LoggerFactory
 import scrape.NoDataFoundException
+import scala.collection.JavaConversions._
 
 import scala.util.{Failure, Success, Try}
 
@@ -13,16 +15,16 @@ import scala.util.{Failure, Success, Try}
 class AuthenticatedClient(webClient: WebClient, username: String, orgId: String, baseUrl: String) {
 
   private val logger = LoggerFactory.getLogger(classOf[AuthenticatedClient])
+  private val mapper = new ObjectMapper
 
   def getAllPayslipsDates(): Try[Seq[HilanDate]] = {
-    val pageWithDates = Try(
-      webClient
-        .getPage[Page](s"$baseUrl/Hilannetv2/PersonalFile/PaySlipViewer.aspx?empId=$orgId$username")
-        .getWebResponse.getContentAsString())
+    val request = new WebRequest(new URL(s"$baseUrl/Hilannetv2/Services/Public/WS/PaySlipApiapi.asmx/GetInitialData"), HttpMethod.POST)
+    request.setRequestBody(s"""{"employeeId":"$username"}""")
+    val pageWithDates = Try(webClient.getPage[Page](request).getWebResponse.getContentAsString())
     logger.debug(s"PaySlipViewer: $pageWithDates")
 
     pageWithDates.flatMap(page =>
-      extractDatesFromPage(page) match {
+      getDatesFromPaySlipJson(page) match {
         case Seq() => Failure(new NoDataFoundException("No payslips found. Login probably failed."))
         case dates => Success(dates)
       }
@@ -30,12 +32,12 @@ class AuthenticatedClient(webClient: WebClient, username: String, orgId: String,
   }
 
   def getAllForm106Dates(): Try[Seq[HilanDate]] = {
-    val pageWithDates = Try(
-      webClient.getPage[Page](s"$baseUrl/Hilannetv2/PersonalFile/Form106Viewer.aspx?empId=$orgId$username")
-        .getWebResponse.getContentAsString())
+    val request = new WebRequest(new URL(s"$baseUrl/Hilannetv2/Services/Public/WS/Form106Apiapi.asmx/GetInitialData"), HttpMethod.POST)
+    request.setRequestBody(s"""{"employeeId":"$username"}""")
+    val pageWithDates = Try(webClient.getPage[Page](request).getWebResponse.getContentAsString())
     logger.debug(s"Form106Viewer: $pageWithDates")
 
-    pageWithDates.flatMap(page => Success(extractDatesFromPage(page)))
+    pageWithDates.flatMap(page => Success(getDatesFrom106Json(page)))
   }
 
   def getPayslipFileStream(fileName: String, fullDate: String): InputStream = {
@@ -48,11 +50,20 @@ class AuthenticatedClient(webClient: WebClient, username: String, orgId: String,
     webClient.getPage[Page](filePath).getWebResponse.getContentAsStream
   }
 
-  def extractDatesFromPage(text: String): Seq[HilanDate] = {
-    val pattern = "\"(\\d{2})/(\\d{2})/(20\\d{2})\"".r
-    val dates = pattern.findAllIn(text).matchData.toSeq
-    val hilanDates = dates.map(m => HilanDate(m.group(1).toInt, m.group(2).toInt, m.group(3).toInt))
-    hilanDates.filter(_.year <= Calendar.getInstance().get(Calendar.YEAR)) //Don't ask...
+  private def getDatesFromPaySlipJson(jsonString: String): Seq[HilanDate] = {
+    val json = mapper.readTree(jsonString)
+    json.get("PaySlipDates").iterator.map((date: JsonNode) => {
+      val parts = date.get("Id").asText.split("/")
+      HilanDate(1, parts(0).toInt, parts(1).toInt)
+    }).toList
+  }
+
+  private def getDatesFrom106Json(jsonString: String): Seq[HilanDate] = {
+    val json = mapper.readTree(jsonString)
+    json.get("Dates").iterator.map((date: JsonNode) => {
+      val year = date.asText.toInt
+      HilanDate(1, 1, year)
+    }).toList
   }
 
 }

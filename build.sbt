@@ -12,6 +12,8 @@ libraryDependencies ++= Seq(
  "org.bouncycastle" % "bcmail-jdk15on" % "1.47" ,
  "org.apache.poi" % "poi" % "3.15" ,
 
+ "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.0",
+
  "net.sourceforge.htmlunit" % "htmlunit" % "2.26" ,
 
  "org.specs2" %% "specs2-core" % "3.7" % "test" ,
@@ -20,3 +22,8 @@ libraryDependencies ++= Seq(
  "org.specs2" %% "specs2-mock" % "3.7" % "test" ,
  "org.specs2" %% "specs2-scalacheck" % "3.7" % "test"
 )
+
+assemblyMergeStrategy in assembly := {
+ case PathList("META-INF", _*) => MergeStrategy.discard
+ case _ => MergeStrategy.first
+}
