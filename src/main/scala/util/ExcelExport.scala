@@ -43,8 +43,8 @@ object ExcelExport {
 
   private def fillWorkSheet(data: Seq[(Key, Map[Date, Value])],
                             worksheet: HSSFSheet,
-                            columnResolver: (Date => Int),
-                            setCellValue: ((HSSFCell, Value) => Unit)): Unit = {
+                            columnResolver: Date => Int,
+                            setCellValue: (HSSFCell, Value) => Unit): Unit = {
     data.zipWithIndex.foreach { case ((k, v), i) =>
 
       val rowInWorkSheet = createRow(worksheet, k.info, k.notes.getOrElse(""), i + 1)
@@ -63,7 +63,7 @@ object ExcelExport {
     createdRow
   }
 
-  private def fillPayslipsWorkSheet(data: Seq[(Key, Map[Date, Value])], payslipsSheet: HSSFSheet, columnResolver: (Date => Int)): Unit = {
+  private def fillPayslipsWorkSheet(data: Seq[(Key, Map[Date, Value])], payslipsSheet: HSSFSheet, columnResolver: Date => Int): Unit = {
 
     val pensionData = data.filter(isPension).zipWithIndex
 

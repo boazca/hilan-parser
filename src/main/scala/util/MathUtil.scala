@@ -9,7 +9,7 @@ object MathUtil {
   }
 
   implicit class Numbers(val str: String) extends AnyVal {
-    def removeCommas: String = str.replace(",", "")
+    def removeCommas(): String = str.replace(",", "")
   }
 
 }

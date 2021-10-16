@@ -13,14 +13,14 @@ class Scraper(authenticatedClient: AuthenticatedClient) {
 
   def downloadPayslips(folderPath: String): Try[Unit] = {
     for {
-      payslipDates <- authenticatedClient.getAllPayslipsDates()
+      payslipDates <- authenticatedClient.fetchAllPayslipsDates()
       downloaded <- downloadPayslipsToFolder(folderPath, payslipDates)
     } yield downloaded
   }
 
   def downloadForm106s(folderPath: String): Try[Unit] = {
     for {
-      form106Dates <- authenticatedClient.getAllForm106Dates()
+      form106Dates <- authenticatedClient.fetchAllForm106Dates()
       downloaded <- downloadForm106sToFolder(Paths.get(folderPath, "Form106").toString, form106Dates)
     } yield downloaded
   }

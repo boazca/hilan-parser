@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.gargoylesoftware.htmlunit.{HttpMethod, Page, WebClient, WebRequest}
 import org.slf4j.LoggerFactory
 import scrape.NoDataFoundException
-import scala.jdk.CollectionConverters._
 
+import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
 
@@ -17,7 +17,7 @@ class AuthenticatedClient(webClient: WebClient, username: String, orgId: String,
   private val logger = LoggerFactory.getLogger(classOf[AuthenticatedClient])
   private val mapper = new ObjectMapper
 
-  def getAllPayslipsDates(): Try[Seq[HilanDate]] = {
+  def fetchAllPayslipsDates(): Try[Seq[HilanDate]] = {
     val request = new WebRequest(new URL(s"$baseUrl/Hilannetv2/Services/Public/WS/PaySlipApiapi.asmx/GetInitialData"), HttpMethod.POST)
     request.setRequestBody(s"""{"employeeId":"$username"}""")
     val pageWithDates = Try(webClient.getPage[Page](request).getWebResponse.getContentAsString())
@@ -31,7 +31,7 @@ class AuthenticatedClient(webClient: WebClient, username: String, orgId: String,
     )
   }
 
-  def getAllForm106Dates(): Try[Seq[HilanDate]] = {
+  def fetchAllForm106Dates(): Try[Seq[HilanDate]] = {
     val request = new WebRequest(new URL(s"$baseUrl/Hilannetv2/Services/Public/WS/Form106Apiapi.asmx/GetInitialData"), HttpMethod.POST)
     request.setRequestBody(s"""{"employeeId":"$username"}""")
     val pageWithDates = Try(webClient.getPage[Page](request).getWebResponse.getContentAsString())

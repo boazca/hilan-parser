@@ -1,6 +1,6 @@
 package data
 
-import java.util.GregorianCalendar
+import java.util.{Date, GregorianCalendar}
 
 import org.specs2.mutable.SpecificationWithJUnit
 import org.specs2.specification.Scope
@@ -26,10 +26,10 @@ class DataExtractorTest extends SpecificationWithJUnit {
     }
 
     "merge info from two lines into one if possible" in new Context {
-      val info = DataExtractor.getLinesByKey(payslip)
+      val info: Map[String, List[String]] = DataExtractor.getLinesByKey(payslip)
       info must havePair("064 מנורה משלימה קצבה שכיר-תג." -> List("5,001.00 6.25 312.56", "5,001.00 5.75 287.55"))
 
-      val merged = DataExtractor.mergeInfoSplitIntoTwoLines(info)
+      val merged: Map[String, List[String]] = DataExtractor.mergeInfoSplitIntoTwoLines(info)
       merged must havePair("064 מנורה משלימה קצבה שכיר-תג." -> List("5001.0 6.25 312.56 5.75 287.55"))
     }
 
@@ -47,7 +47,7 @@ class DataExtractorTest extends SpecificationWithJUnit {
   }
 
   class Context extends Scope {
-    val date = new GregorianCalendar(2016, 4, 1).getTime
+    val date: Date = new GregorianCalendar(2016, 4, 1).getTime
 
     val payslip: String =
       """

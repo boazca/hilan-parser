@@ -24,11 +24,11 @@ class HebrewUtilTest extends SpecificationWithJUnit {
   }
 
   class Ctx extends Scope {
-    val hebrewText =
+    val hebrewText: String =
       """|-1,234.56 -10,000.00 04/16 םייוציפ ינמז הבצק מ.ב 002
-      |1,098.76 5.50 11,123.00 .גת-ריכש הבצק היסנפ ןרק לארה 047
-      |-1,111 35% א45 ףיעסל יוכינ
-      |1,000.00 ESPP לארשי 680""".stripMargin
+         |1,098.76 5.50 11,123.00 .גת-ריכש הבצק היסנפ ןרק לארה 047
+         |-1,111 35% א45 ףיעסל יוכינ
+         |1,000.00 ESPP לארשי 680""".stripMargin
   }
 
 }
