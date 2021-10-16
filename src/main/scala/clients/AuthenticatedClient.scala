@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.gargoylesoftware.htmlunit.{HttpMethod, Page, WebClient, WebRequest}
 import org.slf4j.LoggerFactory
 import scrape.NoDataFoundException
-import scala.collection.JavaConversions._
+import scala.jdk.CollectionConverters._
 
 import scala.util.{Failure, Success, Try}
 
@@ -52,7 +52,7 @@ class AuthenticatedClient(webClient: WebClient, username: String, orgId: String,
 
   private def getDatesFromPaySlipJson(jsonString: String): Seq[HilanDate] = {
     val json = mapper.readTree(jsonString)
-    json.get("PaySlipDates").iterator.map((date: JsonNode) => {
+    json.get("PaySlipDates").iterator.asScala.map((date: JsonNode) => {
       val parts = date.get("Id").asText.split("/")
       HilanDate(1, parts(0).toInt, parts(1).toInt)
     }).toList
@@ -60,7 +60,7 @@ class AuthenticatedClient(webClient: WebClient, username: String, orgId: String,
 
   private def getDatesFrom106Json(jsonString: String): Seq[HilanDate] = {
     val json = mapper.readTree(jsonString)
-    json.get("Dates").iterator.map((date: JsonNode) => {
+    json.get("Dates").iterator.asScala.map((date: JsonNode) => {
       val year = date.asText.toInt
       HilanDate(1, 1, year)
     }).toList
