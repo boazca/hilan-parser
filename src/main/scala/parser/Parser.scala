@@ -1,6 +1,6 @@
 package parser
 
-import java.io.File
+import java.io.{File, FileInputStream}
 import java.nio.file.Paths
 
 import com.itextpdf.text.pdf.PdfReader
@@ -27,7 +27,7 @@ object Parser {
   }
 
   private def getPayslipText(filename: String) = {
-    val reader = new PdfReader(filename)
+    val reader = new PdfReader(new FileInputStream(filename))
     val numberOfPages = reader.getNumberOfPages
     val payslip = new StringBuilder
     for (i <- 0 until numberOfPages) {

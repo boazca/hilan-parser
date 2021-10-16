@@ -46,7 +46,7 @@ class Scraper(authenticatedClient: AuthenticatedClient) {
     if (!Files.isDirectory(Paths.get(localFolderPath))) Files.createDirectory(Paths.get(localFolderPath))
     val localFileDestination = new java.io.File(Paths.get(localFolderPath, localFileName).toString)
     val out = new BufferedOutputStream(new FileOutputStream(localFileDestination))
-    val byteArray = Stream.continually(remoteFile.read).takeWhile(_ != -1).map(_.toByte).toArray
+    val byteArray = LazyList.continually(remoteFile.read).takeWhile(_ != -1).map(_.toByte).toArray
     out.write(byteArray)
     out.flush()
     out.close()

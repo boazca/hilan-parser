@@ -15,9 +15,9 @@ object DataExtractor {
 
   def parse(payslips: Seq[String]): Map[Key, Map[Date, Value]] =
     payslips.flatMap(extractRelevantData)
-      .groupBy(_.key).mapValues(_
-      .groupBy(_.date).mapValues(_
-      .head.value))
+      .groupBy(_.key).view.mapValues(_
+      .groupBy(_.date).view.mapValues(_
+      .head.value).toMap).toMap
 
   private def extractRelevantData(payslip: String): Seq[UniqueValue] = {
     val date = getDate(payslip)
