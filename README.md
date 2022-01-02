@@ -9,7 +9,7 @@ Download the project, open it in your favorite IDE and run `Main.scala`.
 
 Or
 
-Download the fat jar and run it from the shell with `java -jar pdfparser-assembly-1.5.5.jar`.
+Download the fat jar and run it from the shell with `java -jar pdfparser-assembly-x.x.x.jar`.
 
 ### GUI
 1. Run without arguments
@@ -27,5 +27,5 @@ Run with at least one argument and it will ask for the rest (you can just put -w
 
 #### Parsing Without Downloading
 If you already have all your payslips and want to parse them to a spreadsheet, run with only the path argument:  
-`java -jar pdfparser-assembly-1.5.5.jar --path /Users/you/payslip/folder`.  
+`java -jar pdfparser-assembly-x.x.x.jar --path /Users/you/payslip/folder`.  
 \* don't put other documents in the folder
