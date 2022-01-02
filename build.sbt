@@ -1,6 +1,6 @@
 name := "pdfparser"
 
-version := "1.5.5"
+version := "1.5.6"
 
 scalaVersion := "2.13.6"
 
